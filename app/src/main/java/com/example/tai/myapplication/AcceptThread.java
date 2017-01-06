@@ -27,7 +27,6 @@ public class AcceptThread extends Thread {
     }
     public void run() {
         BluetoothSocket socket = null;
-
         while (true) {
             try {
                 socket = mmServerSocket.accept();

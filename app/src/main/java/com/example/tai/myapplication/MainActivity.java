@@ -9,6 +9,8 @@ import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -17,6 +19,11 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     private BluetoothAdapter mbluetoothAdapter;
     private ArrayList<String> mArrayAdapter;
+    private ListView lv;
+
+    private ConnectedThread connectedThread;
+    private  ConnectThread connectThread;
+    private AcceptThread acceptThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,24 +32,27 @@ public class MainActivity extends AppCompatActivity {
 
         mbluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mArrayAdapter = new ArrayList<>();
+
+        lv = (ListView)findViewById(R.id.listView);
     }
     public void on(View v) {
-
-        if (mbluetoothAdapter == null) {
-            // Device not support
-        }
-        if (mbluetoothAdapter.isEnabled()) {
+        if (!mbluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
+    }
 
+    public void list(View v){
         Set<BluetoothDevice> pairedDevices = mbluetoothAdapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
                 mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         }
+        final ArrayAdapter adapter = new  ArrayAdapter(this,android.R.layout.simple_list_item_1, pairedDevices.toArray());
+        lv.setAdapter(adapter);
     }
+
 
     public void checkPaired(View v) {
          final BroadcastReceiver mReceiver = new BroadcastReceiver() {
